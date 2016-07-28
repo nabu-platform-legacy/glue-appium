@@ -31,9 +31,12 @@ public class AppiumMethods {
 	
 	private static AppiumDriverLocalService service;
 
-	public static void scroll(@GlueParam(name = "webdriver") WebDriver driver, Integer amount) {
+	public static void scroll(@GlueParam(name = "webdriver") Object driver, Integer amount) {
 		if (amount == null) {
 			amount = 250;
+		}
+		if (driver instanceof WrappedDriver) {
+			driver = ((WrappedDriver) driver).getDriver();
 		}
 		if (driver instanceof WebDriver) {
 			AppiumDriver<?> appiumDriver = ((AppiumDriver<?>) driver);
