@@ -11,6 +11,7 @@ import java.util.Map;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -27,6 +28,8 @@ import be.nabu.libs.evaluator.annotations.MethodProviderClass;
 @MethodProviderClass(namespace = "appium")
 public class AppiumMethods {
 	
+	private static AppiumDriverLocalService service;
+	
 	/**
 	 * Returns a driver to test the browser on a mobile device
 	 */
@@ -36,6 +39,12 @@ public class AppiumMethods {
 			platform = "Android";
 		}
 		capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platform);
+		if ("android".equalsIgnoreCase("android")) {
+			capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+		}
+		else {
+			capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
+		}
 		if (browser == null) {
 			if ("android".equalsIgnoreCase(platform)) {
 				browser = "Chrome";
@@ -53,10 +62,11 @@ public class AppiumMethods {
 		return getDriver("android".equalsIgnoreCase(platform), capabilities);
 	}
 	
+
 	/**
 	 * Returns a driver to test an application on a mobile device
 	 */
-	public static Closeable appdriver(@GlueParam(name = "application") String application, @GlueParam(name = "language") String language, @GlueParam(name = "version") String version, @GlueParam(name = "landscape") Boolean landscape) throws MalformedURLException {
+	public static Closeable appdriver(@GlueParam(name = "application") String application, @GlueParam(name = "language") String language, @GlueParam(name = "version") String version, @GlueParam(name = "landscape") Boolean landscape, @GlueParam(name = "udid") String udid) throws MalformedURLException {
 		// based on: http://appium.io/slate/en/master/?ruby#appium-server-capabilities
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability(MobileCapabilityType.APP, application);
@@ -67,6 +77,9 @@ public class AppiumMethods {
 		else if (application.endsWith(".ipa")) {
 			capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
 			capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
+		}
+		if (udid != null) {
+			capabilities.setCapability("udid", udid);
 		}
 		
 		if (version != null) {
@@ -82,21 +95,25 @@ public class AppiumMethods {
 		return getDriver(application.endsWith(".apk"), capabilities);
 	}
 
+	private static AppiumDriverLocalService getService() {
+		Map<String, String> environment = new HashMap<String, String>();
+		// TODO: settings for iOS?
+		environment.put("ANDROID_HOME", ScriptMethods.environment("androidHome"));
+		AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder()
+			.usingDriverExecutable(new File(ScriptMethods.environment("nodeJs")))
+			.withAppiumJS(new File(ScriptMethods.environment("appiumMain")))
+			.withEnvironment(environment)
+			.withIPAddress("127.0.0.1").usingPort(Integer.parseInt(ScriptMethods.environment("appiumPort", "4723"))));
+		service.start();
+		return service;
+	}
 	private static Closeable getDriver(boolean isAndroid, DesiredCapabilities capabilities) throws MalformedURLException {
 		WebDriver driver;
 		String url = ScriptMethods.environment("selenium.server.url");
 		// local execution
-		if (url == null) {
-			Map<String, String> environment = new HashMap<String, String>();
-			// TODO: settings for iOS?
-			environment.put("ANDROID_HOME", ScriptMethods.environment("androidHome"));
-			final AppiumDriverLocalService service = AppiumDriverLocalService.buildService(new AppiumServiceBuilder()
-				.usingDriverExecutable(new File(ScriptMethods.environment("nodeJs")))
-				.withAppiumJS(new File(ScriptMethods.environment("appiumMain")))
-				.withEnvironment(environment)
-				.withIPAddress("127.0.0.1").usingPort(Integer.parseInt(ScriptMethods.environment("appiumPort", "4723"))));
+		if (url == null) {		
+			final AppiumDriverLocalService service = getService();
 			
-			service.start();
 			if (isAndroid) {
 				driver = new AndroidDriver<MobileElement>(service.getUrl(), capabilities);
 			}
