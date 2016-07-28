@@ -12,7 +12,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -41,10 +40,10 @@ public class AppiumMethods {
 		if (driver instanceof WebDriver) {
 			AppiumDriver<?> appiumDriver = ((AppiumDriver<?>) driver);
 			if (amount > 0) {
-				appiumDriver.swipe(50, amount + 50, 50, 50, 50);
+				appiumDriver.swipe(50, amount + 50, 50, 50, 500);
 			}
 			else {
-				appiumDriver.swipe(50, 50, 50, amount + 50, 50);
+				appiumDriver.swipe(50, 50, 50, amount + 50, 500);
 			}
 		}
 	}
