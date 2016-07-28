@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
@@ -29,6 +30,21 @@ import be.nabu.libs.evaluator.annotations.MethodProviderClass;
 public class AppiumMethods {
 	
 	private static AppiumDriverLocalService service;
+
+	public static void scroll(@GlueParam(name = "webdriver") WebDriver driver, Integer amount) {
+		if (amount == null) {
+			amount = 250;
+		}
+		if (driver instanceof WebDriver) {
+			AppiumDriver<?> appiumDriver = ((AppiumDriver<?>) driver);
+			if (amount > 0) {
+				appiumDriver.swipe(50, amount + 50, 50, 50, 50);
+			}
+			else {
+				appiumDriver.swipe(50, 50, 50, amount + 50, 50);
+			}
+		}
+	}
 	
 	/**
 	 * Returns a driver to test the browser on a mobile device
