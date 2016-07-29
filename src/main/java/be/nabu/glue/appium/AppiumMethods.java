@@ -43,11 +43,11 @@ public class AppiumMethods {
 				// scroll in increments if necessary, otherwise it might fail (presumably because you swipe more pixels than the device is big)
 				int scrollAmount = Math.min(Math.abs(amount), 300);
 				if (amount > 0) {
-					appiumDriver.swipe(50, amount + 50, 50, 50, scrollAmount);
+					appiumDriver.swipe(50, scrollAmount + 50, 50, 50, scrollAmount);
 					amount -= scrollAmount;
 				}
 				else {
-					appiumDriver.swipe(50, 50, 50, amount + 50, scrollAmount);
+					appiumDriver.swipe(50, 50, 50, scrollAmount + 50, -scrollAmount);
 					amount += scrollAmount;
 				}
 			}
