@@ -32,18 +32,24 @@ public class AppiumMethods {
 
 	public static void scroll(@GlueParam(name = "webdriver") Object driver, Integer amount) {
 		if (amount == null) {
-			amount = 250;
+			amount = 300;
 		}
 		if (driver instanceof WrappedDriver) {
 			driver = ((WrappedDriver) driver).getDriver();
 		}
 		if (driver instanceof WebDriver) {
 			AppiumDriver<?> appiumDriver = ((AppiumDriver<?>) driver);
-			if (amount > 0) {
-				appiumDriver.swipe(50, amount + 50, 50, 50, 500);
-			}
-			else {
-				appiumDriver.swipe(50, 50, 50, amount + 50, 500);
+			while (Math.abs(amount) > 0) {
+				// scroll in increments if necessary, otherwise it might fail (presumably because you swipe more pixels than the device is big)
+				int scrollAmount = Math.min(Math.abs(amount), 300);
+				if (amount > 0) {
+					appiumDriver.swipe(50, amount + 50, 50, 50, scrollAmount);
+					amount -= scrollAmount;
+				}
+				else {
+					appiumDriver.swipe(50, 50, 50, amount + 50, scrollAmount);
+					amount += scrollAmount;
+				}
 			}
 		}
 	}
