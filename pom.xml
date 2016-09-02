@@ -60,11 +60,11 @@
 		<dependency>
 			<groupId>io.appium</groupId>
 			<artifactId>java-client</artifactId>
-			<version>3.4.0</version>
+			<version>4.1.2</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.seleniumhq.selenium</groupId>
-					<artifactId>selenium-java</artifactId>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
