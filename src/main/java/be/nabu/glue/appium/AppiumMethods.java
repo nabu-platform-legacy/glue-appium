@@ -20,7 +20,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import be.nabu.glue.annotations.GlueParam;
-import be.nabu.glue.impl.methods.ScriptMethods;
+import be.nabu.glue.core.impl.methods.ScriptMethods;
 import be.nabu.glue.selenium.SeleneseMethodProvider;
 import be.nabu.glue.selenium.SeleneseMethodProvider.WrappedDriver;
 import be.nabu.libs.evaluator.annotations.MethodProviderClass;

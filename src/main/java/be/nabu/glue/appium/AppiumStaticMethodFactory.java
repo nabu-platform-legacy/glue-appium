@@ -3,7 +3,7 @@ package be.nabu.glue.appium;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.nabu.glue.api.StaticMethodFactory;
+import be.nabu.glue.core.api.StaticMethodFactory;
 
 public class AppiumStaticMethodFactory implements StaticMethodFactory {
 
